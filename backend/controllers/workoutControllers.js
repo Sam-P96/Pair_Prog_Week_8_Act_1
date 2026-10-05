@@ -36,7 +36,26 @@ const getWorkoutById = async (req, res) => {
 
 // PUT /api/workouts/:workoutId
 const updateWorkout = async (req, res) => {
-  res.send('updateWorkout');
+  const { workoutId } = req.params;
+  if (!mongoose.Types.ObjectId.isValid(workoutId)) {
+    return res.status(404).json({ error: "No such workout" });
+  }
+
+  try {
+    // const user_id = req.user._id;
+    const workout = await Workout.findOneAndUpdate(
+      { _id: workoutId },
+      { ...req.body },
+      { new: true }
+    );
+    if (!workout) {
+      return res.status(400).json({ message: "Invalid ID or Invalid Updatefield" });
+    }
+    res.status(200).json(workout);
+  } catch (error) {
+    console.error("Error updating workout:", error);
+    res.status(500).json({ error: "Server Error" });
+  }
 };
 
 // DELETE /api/workouts/:workoutId
