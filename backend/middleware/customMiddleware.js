@@ -19,6 +19,8 @@ const errorHandler = (error, req, res, next) => {
 const requestLogger = (req, res, next) => {
   logger.info('Method:', req.method);
   logger.info('Path:  ', req.path);
+  const body = req.body ? { ...req.body } : undefined;
+  if (body && Object.hasOwn(body, 'password')) body.password = '[redacted]';
   logger.info('Body:  ', req.body);
   logger.info('---');
   next();
